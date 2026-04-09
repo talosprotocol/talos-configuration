@@ -1,25 +1,19 @@
-
-import base64
-import msgpack
+from talos_contracts import derive_cursor, decode_cursor
 from datetime import datetime
 from typing import Optional, Tuple
 from src.core.storage import IdempotencyRecord
 import hashlib
 
 def encode_cursor(created_at: datetime, id: str) -> str:
-    # Format: base64url(msgpack([timestamp_str, id]))
-    # Using ISO format string for simple serialization in msgpack
-    score = created_at.isoformat()
-    packed = msgpack.packb([score, id])
-    return base64.urlsafe_b64encode(packed).decode('utf-8')
+    # Format: base64url(utf8("{timestamp}:{id}"))
+    ts = int(created_at.timestamp())
+    return derive_cursor(ts, id)
 
-def decode_cursor(cursor: str) -> Tuple[datetime, str]:
+def decode_cursor_to_dt(cursor: str) -> Tuple[datetime, str]:
     try:
-        packed = base64.urlsafe_b64decode(cursor)
-        unpacked = msgpack.unpackb(packed)
-        if not isinstance(unpacked, list) or len(unpacked) != 2:
-             raise ValueError("Invalid cursor format")
-        return datetime.fromisoformat(unpacked[0]), unpacked[1]
+        decoded = decode_cursor(cursor)
+        dt = datetime.fromtimestamp(decoded["timestamp"])
+        return dt, decoded["event_id"]
     except Exception:
         raise ValueError("Invalid cursor")
 

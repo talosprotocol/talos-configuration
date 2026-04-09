@@ -10,4 +10,4 @@ COPY . .
 # In production, we would install the talos-contracts package here
 # RUN pip install talos-contracts
 
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8003"]

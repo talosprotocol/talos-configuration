@@ -128,7 +128,7 @@ async def normalize(request: Request):
     }
 
 from src.core.storage import Database, ConfigDraft, ConfigHistory, IdempotencyRecord
-from src.core.utils import encode_cursor, decode_cursor, check_idempotency_conflict, compute_body_digest
+from src.core.utils import encode_cursor, decode_cursor_to_dt, check_idempotency_conflict, compute_body_digest
 from datetime import datetime, timezone
 from typing import Optional
 import uuid
@@ -268,7 +268,7 @@ async def list_history(limit: int = 50, cursor: Optional[str] = None):
     
     if cursor:
         try:
-            before_created_at, before_id = decode_cursor(cursor)
+            before_created_at, before_id = decode_cursor_to_dt(cursor)
         except ValueError:
             return JSONResponse(status_code=400, content={"error": {"code": "BAD_REQUEST", "message": "Invalid cursor"}})
             
@@ -316,11 +316,17 @@ async def export_config(request: Request):
              return JSONResponse(status_code=404, content={"error": {"code": "NOT_FOUND", "message": "No active config"}})
         config_data = json.loads(active.config_json)
         digest = active.config_digest
+    elif src == "draft":
+        draft_id = body.get("draft_id")
+        if not draft_id:
+             return JSONResponse(status_code=400, content={"error": {"code": "BAD_REQUEST", "message": "Missing draft_id"}})
+        draft = DB.get_draft(draft_id)
+        if not draft:
+             return JSONResponse(status_code=404, content={"error": {"code": "NOT_FOUND", "message": "Draft not found"}})
+        config_data = json.loads(draft.config_json)
+        digest = draft.config_digest
     else:
-        # draft logic not strictly required by spec for export but nice to have?
-        # Spec says: enum: [active, draft]. So yes.
-        # But we need ID for draft.
-        return JSONResponse(status_code=501, content={"error": {"code": "NOT_IMPLEMENTED", "message": "Draft export not implemented yet"}})
+        return JSONResponse(status_code=400, content={"error": {"code": "BAD_REQUEST", "message": "Invalid source"}})
 
     if redacted:
         config_data = redact_config(config_data)

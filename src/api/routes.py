@@ -349,3 +349,31 @@ async def export_config(request: Request):
         "filename": filename,
         "content_type": content_type
     }
+
+@router.get("/merchants")
+async def list_merchants():
+    """List UCP merchants for enforcement orchestration."""
+    return [
+        {
+            "id": "m1",
+            "domain": "merchant.example.com",
+            "isEnabled": True,
+            "capabilities": ["ucp.checkout", "ucp.refund"]
+        },
+        {
+            "id": "m2",
+            "domain": "shop.talos.network",
+            "isEnabled": False,
+            "capabilities": ["ucp.checkout"]
+        }
+    ]
+
+@router.get("/stats")
+async def get_dashboard_stats():
+    """Aggregated statistics for the security console."""
+    return {
+        "totalTransactions": 12840,
+        "blockedRequests": 42,
+        "avgLatencyMs": 4.2,
+        "uptime": 99.98
+    }

@@ -15,3 +15,8 @@ Run locally:
 ```bash
 uvicorn main:app --reload
 ```
+
+## License
+
+Talos Configuration Service is distributed under the Apache License 2.0. See
+`LICENSE` and `NOTICE` in this repository for attribution details.

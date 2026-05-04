@@ -56,7 +56,7 @@ def run_test():
         return
         
     draft_id = body['draft_id']
-    digest = body['config_digest']
+    body['config_digest']
     print(f"Draft ID: {draft_id}")
     
     # 2. Idempotency Check (Replay)

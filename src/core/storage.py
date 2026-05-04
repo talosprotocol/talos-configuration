@@ -2,7 +2,7 @@
 import sqlite3
 from datetime import datetime, timezone
 import json
-from typing import Optional, List, Tuple
+from typing import Optional, List
 from pydantic import BaseModel
 
 class ConfigDraft(BaseModel):

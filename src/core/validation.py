@@ -4,7 +4,6 @@ import hashlib
 import jsonschema
 from typing import Tuple, Dict, Any, List, Optional
 from src.core.jcs import canonicalize
-from src.core import redaction
 
 # Load schema once (in a real app, this might be dynamic or reloaded)
 # For now, we assume it's available relative to the service or bundled

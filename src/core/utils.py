@@ -1,6 +1,6 @@
 from talos_contracts import derive_cursor, decode_cursor
 from datetime import datetime
-from typing import Optional, Tuple
+from typing import Tuple
 from src.core.storage import IdempotencyRecord
 import hashlib
 

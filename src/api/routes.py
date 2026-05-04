@@ -1,5 +1,5 @@
 
-from fastapi import APIRouter, Request, Response, HTTPException
+from fastapi import APIRouter, Request, Response
 from fastapi.responses import JSONResponse
 from src.core.config import SETTINGS
 from src.core.validation import validate_and_normalize
@@ -8,9 +8,8 @@ import json
 import importlib.metadata
 
 # Rate Limiting
-from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi import Limiter
 from slowapi.util import get_remote_address
-from slowapi.errors import RateLimitExceeded
 
 limiter = Limiter(key_func=get_remote_address)
 router = APIRouter()
